@@ -70,12 +70,24 @@ async function main() {
 
         console.error("✅ RWA.build MCP Server is running!");
         console.error("🎯 Available tools:");
+        
+        console.error("\n📊 Core Tokenization:");
         console.error("   • rwa_tokenize_asset - Tokenize real-world assets");
         console.error("   • rwa_setup_yield_distribution - Configure yield payments");
         console.error("   • rwa_distribute_yield - Execute yield distributions");
         console.error("   • rwa_get_asset_info - Get tokenized asset information");
+        
+        console.error("\n💳 Wallet Management:");
+        console.error("   • rwa_get_wallet_info - Get wallet address and balance");
+        console.error("   • rwa_get_account_balances - Check XRP and token balances");
+        console.error("   • rwa_send_xrp - Send XRP to another address");
+        console.error("   • rwa_create_trustline - Create trustline for RWA tokens");
+        console.error("   • rwa_get_transaction_history - View transaction history");
+        console.error("   • rwa_validate_address - Validate XRPL addresses");
+        
         console.error("");
-        console.error("💡 Try: 'Tokenize my $2M office building with 2000 tokens generating 6% annual rental yield'");
+        console.error("💡 Try: 'Create a real estate tokenization platform with investor dashboard and yield tracking'");
+        console.error("📝 Note: Requires Filesystem MCP for webapp generation - see WEBAPP_GENERATION_GUIDE.md");
         
     } catch (error) {
         console.error('❌ Error starting RWA.build MCP server:', error);
