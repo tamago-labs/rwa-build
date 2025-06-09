@@ -1,23 +1,86 @@
 #!/usr/bin/env node
 
+import { validateEnvironment } from './config';
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { RWAMcpTools } from "./mcp"
+import { RWAAgent } from './agent';
+
+/**
+ * Creates an MCP server for RWA tokenization on XRPL
+ */
+function createMcpServer(agent: RWAAgent) {
+    // Create MCP server instance
+    const server = new McpServer({
+        name: "rwa-build",
+        version: "0.1.0"
+    });
+
+    // Register all RWA tools
+    for (const [_key, tool] of Object.entries(RWAMcpTools)) {
+        server.tool(tool.name, tool.description, tool.schema, async (params: any): Promise<any> => {
+            try {
+                // Execute the handler with the params directly
+                const result = await tool.handler(agent, params);
+
+                // Format the result as MCP tool response
+                return {
+                    content: [
+                        {
+                            type: "text",
+                            text: JSON.stringify(result, null, 2),
+                        },
+                    ],
+                };
+            } catch (error) {
+                console.error("Tool execution error:", error);
+                // Handle errors in MCP format
+                return {
+                    isError: true,
+                    content: [
+                        {
+                            type: "text",
+                            text: error instanceof Error
+                                ? error.message
+                                : "Unknown error occurred",
+                        },
+                    ],
+                };
+            }
+        });
+    }
+
+    return server;
+}
+
 async function main() {
     try {
+        console.error("🏗️ Starting RWA.build MCP Server...");
 
         // Validate environment before proceeding
-        // validateEnvironment();
+        validateEnvironment();
 
-        // const myAgent = new Agent();
+        // Create RWA agent
+        const rwaAgent = new RWAAgent();
 
-        // const server = createMcpServer(myAgent);
-        // const transport = new StdioServerTransport();
-        // await server.connect(transport);
+        // Create and start MCP server
+        const server = createMcpServer(rwaAgent);
+        const transport = new StdioServerTransport();
+        await server.connect(transport);
 
-        console.error("MCP server is running...");
+        console.error("✅ RWA.build MCP Server is running!");
+        console.error("🎯 Available tools:");
+        console.error("   • rwa_tokenize_asset - Tokenize real-world assets");
+        console.error("   • rwa_setup_yield_distribution - Configure yield payments");
+        console.error("   • rwa_distribute_yield - Execute yield distributions");
+        console.error("   • rwa_get_asset_info - Get tokenized asset information");
+        console.error("");
+        console.error("💡 Try: 'Tokenize my $2M office building with 2000 tokens generating 6% annual rental yield'");
+        
     } catch (error) {
-        console.error('Error starting MCP server:', error);
+        console.error('❌ Error starting RWA.build MCP server:', error);
         process.exit(1);
     }
 }
 
-
-main()
+main();
