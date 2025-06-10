@@ -1,7 +1,16 @@
 import { validateXRPLAddress } from '../src/utils/validation';
 import { isValidXRPLAddress, generateAssetId, parseAssetId } from '../src/utils/xrpl_helpers';
+import { Wallet } from "xrpl"
 
 describe('XRPL Wallet Utils', () => {
+
+    describe('generateXRPLAddress', () => {
+        test('should generate valid XRPL address', () => {
+            const { classicAddress } = Wallet.generate()
+            expect(validateXRPLAddress(classicAddress)).toEqual({ valid: true });
+        }); 
+    });
+
     describe('validateXRPLAddress', () => {
         test('should accept valid XRPL addresses', () => {
             expect(validateXRPLAddress('rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH')).toEqual({ valid: true });

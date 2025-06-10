@@ -17,14 +17,14 @@ export class RWAAgent {
         // Initialize wallet from seed/private key
         this.wallet = Wallet.fromSeed(config.privateKey);
         
-        console.log(`🏗️ RWA Agent initialized on ${this.network}`);
-        console.log(`📍 Wallet address: ${this.wallet.address}`);
+        console.error(`🏗️ RWA Agent initialized on ${this.network}`);
+        console.error(`📍 Wallet address: ${this.wallet.address}`);
     }
 
     async connect(): Promise<void> {
         try {
             await this.client.connect();
-            console.log('✅ Connected to XRPL');
+            console.error('✅ Connected to XRPL');
         } catch (error) {
             console.error('❌ Failed to connect to XRPL:', error);
             throw error;
@@ -34,7 +34,7 @@ export class RWAAgent {
     async disconnect(): Promise<void> {
         try {
             await this.client.disconnect();
-            console.log('🔌 Disconnected from XRPL');
+            console.error('🔌 Disconnected from XRPL');
         } catch (error) {
             console.error('❌ Failed to disconnect:', error);
         }
@@ -68,7 +68,7 @@ export class RWAAgent {
             };
 
             const accountSetResult = await this.client.submitAndWait(accountSet, { wallet: this.wallet });
-            console.log(`✅ Account set for issuing: ${accountSetResult.result.hash}`);
+            console.error(`✅ Account set for issuing: ${accountSetResult.result.hash}`);
 
             // Step 2: Create the token issuance concept
             // Note: In XRPL, tokens are created when trustlines are established
@@ -100,8 +100,8 @@ export class RWAAgent {
             // In a full implementation, this would create escrow accounts
             // and automated payment schedules
             
-            console.log(`🔧 Setting up ${distribution.type} distribution for ${assetId}`);
-            console.log(`📊 Rate: ${distribution.rate}% ${distribution.frequency}`);
+            console.error(`🔧 Setting up ${distribution.type} distribution for ${assetId}`);
+            console.error(`📊 Rate: ${distribution.rate}% ${distribution.frequency}`);
             
             return {
                 status: 'success',
