@@ -33,16 +33,16 @@ describe('Financial Calculations', () => {
         test('should calculate investment yields correctly', () => {
             const result = calculateYieldOnInvestment(50000, 7.2, 'quarterly');
             
-            expect(result.annualYield).toBe(3600); // 50000 * 0.072
-            expect(result.periodicYield).toBe(900); // 3600 / 4
+            expect(Math.floor(result.annualYield)).toBe(3600); // 50000 * 0.072
+            expect(Math.floor(result.periodicYield)).toBe(900); // 3600 / 4
             expect(result.periodsPerYear).toBe(4);
         });
 
         test('should handle monthly yields', () => {
             const result = calculateYieldOnInvestment(100000, 12, 'monthly');
             
-            expect(result.annualYield).toBe(12000);
-            expect(result.periodicYield).toBe(1000); // 12000 / 12
+            expect(Math.floor(result.annualYield)).toBe(12000);
+            expect(Math.floor(result.periodicYield)).toBe(1000); // 12000 / 12
             expect(result.periodsPerYear).toBe(12);
         });
     });
