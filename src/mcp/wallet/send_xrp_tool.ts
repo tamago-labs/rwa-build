@@ -90,11 +90,6 @@ export const SendXRPTool: McpTool = {
                     previous_balance: `${currentBalance.toFixed(6)} XRP`,
                     new_balance: `${newBalance.toFixed(6)} XRP`,
                     total_deducted: `${(currentBalance - newBalance).toFixed(6)} XRP`
-                },
-                network_info: {
-                    network: agent.network,
-                    confirmed: result.result.meta?.TransactionResult === 'tesSUCCESS',
-                    validation_time: "3-5 seconds (XRPL average)"
                 }
             };
         } catch (error: any) {
@@ -108,7 +103,7 @@ export const SendXRPTool: McpTool = {
                     }
                 };
             }
-            
+
             if (error.message.includes('tecNO_DST')) {
                 return {
                     status: "error",
