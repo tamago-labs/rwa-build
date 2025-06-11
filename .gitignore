@@ -7,4 +7,6 @@
 # Build files
 /dist
 
+/old
+
 .env

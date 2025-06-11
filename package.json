@@ -27,16 +27,17 @@
   "scripts": {
     "build": "tsup",
     "prepare": "npm run build",
-    "test": "jest"
+    "test": "jest", 
+    "setup:wallet": "ts-node scripts/setup-wallet.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pisuthd/rwa-build.git"
+    "url": "git+https://github.com/tamago-labs/rwa-build.git"
   },
   "author": "Pisuth",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pisuthd/rwa-build/issues"
+    "url": "https://github.com/tamago-labs/rwa-build/issues"
   },
   "homepage": "https://rwa-build.vercel.app",
   "dependencies": {
