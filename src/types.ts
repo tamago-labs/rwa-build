@@ -35,11 +35,23 @@ export interface ComplianceConfig {
 
 // 📊 Transaction Results
 export interface TokenizationResult {
-  status: 'success' | 'error';
+  status: 'success' | 'error'; 
   tokenId: string;
   currency: string;
   issuerAddress: string;
   message: string;
+  metadata?: {
+    assetMetadata: any;
+    tokenizationTxHash: string;
+    retrievalMethod: string;
+    tokensIssued: boolean;
+    issuanceResults?: Array<{
+      type: string;
+      hash: string;
+      amount: number;
+      destination: string;
+    }>;
+  };
 }
 
 export interface DistributionResult {
@@ -72,8 +84,7 @@ export interface RWAConfig {
   server: string;
 }
 
-// 📝 Tokenization Input
-export interface TokenizeAssetInput {
+export interface TokenizeAssetInput { 
   type: 'real_estate' | 'treasury' | 'commodity' | 'bond';
   name: string;
   totalValue: number;

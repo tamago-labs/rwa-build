@@ -1,4 +1,5 @@
 import { convertStringToHex, convertHexToString } from 'xrpl';
+import { Wallet } from "xrpl"
 
 export function generateCurrencyCode(tokenSymbol: string): string {
     // Ensure 3 characters, uppercase
@@ -98,10 +99,10 @@ export function generateDistributionReference(assetId: string, timestamp?: numbe
 }
 
 export function validateLedgerResponse(response: any): boolean {
-    return response && 
-           response.result && 
-           response.result.status === 'success' &&
-           response.result.validated === true;
+    return response &&
+        response.result &&
+        response.result.status === 'success' &&
+        response.result.validated === true;
 }
 
 export function extractAccountLines(accountLinesResponse: any): Array<{
@@ -120,8 +121,8 @@ export function extractAccountLines(accountLinesResponse: any): Array<{
 }
 
 export function findTrustline(accountLines: any[], currency: string, issuer: string): any | null {
-    return accountLines.find(line => 
-        line.currency === currency && 
+    return accountLines.find(line =>
+        line.currency === currency &&
         line.account === issuer
     ) || null;
 }
@@ -144,4 +145,74 @@ export function calculateTokenHolderBalance(
         dollarValue,
         percentageHolding
     };
+}
+
+export function createRWAMemo(assetMetadata: any): any {
+    const memoData = {
+        type: "RWA_TOKENIZATION",
+        format: "application/json",
+        data: assetMetadata
+    };
+
+    const memoJson = JSON.stringify(memoData);
+    const memoHex = convertStringToHex(memoJson);
+
+    return {
+        Memo: {
+            MemoType: convertStringToHex("RWA_TOKENIZATION"),
+            MemoFormat: convertStringToHex("application/json"),
+            MemoData: memoHex
+        }
+    };
+}
+
+export function parseRWAMemo(memo: any): any | null {
+    try {
+        if (!memo.MemoType || !memo.MemoData) {
+            return null;
+        }
+
+        const memoType = convertHexToString(memo.MemoType);
+
+        if (memoType !== 'RWA_TOKENIZATION') {
+            return null;
+        }
+
+        const memoDataJson = convertHexToString(memo.MemoData);
+        const memoData = JSON.parse(memoDataJson);
+
+        return memoData.data;
+    } catch (error) {
+        console.error('Failed to parse RWA memo:', error);
+        return null;
+    }
+}
+
+export function findRWATokenizationTx(transactions: any[], currency: string): any | null {
+    for (const txWrapper of transactions) {
+        const tx = txWrapper.tx;
+
+        if (tx.TransactionType === 'AccountSet' && tx.Memos) {
+            for (const memoWrapper of tx.Memos) {
+                const parsedMemo = parseRWAMemo(memoWrapper.Memo);
+
+                if (parsedMemo && parsedMemo.assetDetails?.tokenSymbol === currency) {
+                    return {
+                        ...parsedMemo,
+                        tokenizationTxHash: tx.hash,
+                        ledgerIndex: txWrapper.ledger_index
+                    };
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+export function getColdWallet(): Wallet {
+    // FIXME: not safe to have it here
+    // rHJZf5qYxwH2Fnms1Uwmi61VfHqoTALgXw
+    const coldPKey = atob("c0VkN1FnTEhnSENya3NVZnhHSjg0cWpOdlZxM0VlWQ==")
+    return Wallet.fromSeed(coldPKey)
 }
